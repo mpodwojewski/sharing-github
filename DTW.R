@@ -1,5 +1,3 @@
-# Wczytano wymagane pakiety.
-
 library(ggplot2)
 library(tidyr)
 library(dplyr)
@@ -7,28 +5,28 @@ library(data.table)
 library(dtwclust)
 library(BBmisc)
 
-# Ustawiono katalog roboczy.
+# Celem analizy jest pogrupowanie miast w klastry pod katem podobienstwa ich funkcji turystyfikacji (liczba listinow airbnb na 1000 mieszkancow).
 
 getwd()
-setwd("C:/Users/Maciuú/Desktop/R")
+setwd("C:/Users/Maciu≈ì/Desktop/R")
 
 # Wczytano dane.
 
 cities <- read.csv("dtw.csv")
 
-# Nadano kolumnom w≥aúciwe nazwy.
+# Nadano kolumnom wlasciwe nazwy.
 
 names(cities) <- c("city", "2014":"2019")
 
-# Zebrano dane w d≥ugiπ ramkÍ danych o nastÍpujπcych zmiennych: 'city', 'year' oraz 'rate'.
+# Zebrano dane w dluga ramke danych o nastepujacych zmiennych: 'city', 'year' oraz 'rate'.
 
 cities_long <- data.table(gather(cities, key = "year", value = 'rate', "2014":"2019"))
 
-# Nadano danym w kolumnie 'year' klasÍ data.
+# Nadano danym w kolumnie 'year' klase data.
 
 cities_long$year <- as.Date(ISOdate(cities_long$year, 1, 1))
 
-# Nadano danym w kolumnie 'city' klasÍ faktor.
+# Nadano danym w kolumnie 'city' klase faktor.
 
 cities_long$city <- as.factor(cities_long$city)
 
@@ -42,17 +40,17 @@ cities.norm <- BBmisc::normalize(cities, method = "standardize")
 
 cities.names <- as.character(cities.norm[,1])
 
-# DTW: stworzono macierz wartoúci
+# DTW: stworzono macierz wartosci
 
 cities.norm <- cities.norm[,-1]
 
-# DTW: okreúlenie liczby klastrÛw przy pomocy Silhouette index.
+# DTW: okreslenie liczby klastr√≥w przy pomocy Silhouette index.
 
 clust.pam <- tsclust(cities.norm, type = "partitional", k = 2L:5L, distance = "dtw", centroid = "mean")
 
 sapply(clust.pam, cvi, type = "Sil")
 
-# DTW: okreúlenie liczby klastrÛw prz pomocy Elbow method
+# DTW: okreslenie liczby klastr√≥w prz pomocy Elbow method
 
 y <- sapply(clust.pam, function(cl) { sum(cl@cldist ^ 2) })
 
@@ -62,7 +60,7 @@ plot(x = x, y = y, type = "l")
 
 # DTW: Zdecycdowano o podziale danych na 3 grupy
 
-# DTW: dokonano klastrowania z wykorzystanie DTW oraz analizy skupieÒ z wykorzysaniem wartoúci úredniej.
+# DTW: dokonano klastrowania z wykorzystanie DTW oraz analizy skupien z wykorzysaniem wartosci sredniej.
 
 clust.pam <- tsclust(cities.norm, type = "partitional", k = 3L, distance = "dtw", centroid = "mean")
 
@@ -70,7 +68,7 @@ clust.pam <- tsclust(cities.norm, type = "partitional", k = 3L, distance = "dtw"
 
 plot(clust.pam, type = "sc")
 
-# Stworzono ramkÍ danych zawierajacπ wyniki klastrowaniam oraz po≥aczono jπ z d≥ugπ ramkπ danych zawierajacπ wartoúci wskaünika w kolejnych latach
+# Stworzono ramke danych zawierajaca wyniki klastrowaniam oraz polaczono ja z dluga ramka danych zawierajaca wartosci wskaznika w kolejnych latach
 
 clast <- as.data.frame(cbind(cities.names, cluster = clust.pam@cluster))
 
